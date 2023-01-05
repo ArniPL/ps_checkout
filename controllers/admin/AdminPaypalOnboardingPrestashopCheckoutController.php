@@ -42,26 +42,14 @@ class AdminPaypalOnboardingPrestashopCheckoutController extends ModuleAdminContr
                 return false;
             }
 
-            if (!Validate::isGenericName($idMerchant) || PaypalAccountUpdater::MIN_ID_LENGTH > strlen($idMerchant)) {
+            if (!Validate::isGenericName($idMerchant)) {
                 $this->errors[] = $this->module->l('Your PayPal Merchant identifier seems invalid.');
 
                 return false;
             }
 
-            $paypalAccount = new PaypalAccount($idMerchant);
-
-            /** @var \PrestaShop\Module\PrestashopCheckout\PersistentConfiguration $persistentConfiguration */
-            $persistentConfiguration = $this->module->getService('ps_checkout.persistent.configuration');
-            $persistentConfiguration->savePaypalAccount($paypalAccount);
-
-            /** @var PaypalAccountUpdater $accountUpdater */
-            $accountUpdater = $this->module->getService('ps_checkout.updater.paypal.account');
-            $accountUpdater->update($paypalAccount);
-
-            if ($paypalAccount->getCardPaymentStatus() === PaypalAccountUpdater::SUBSCRIBED) {
-                // track account paypal fully approved
-                $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
-            }
+            // track account paypal fully approved
+            // $this->module->getService('ps_checkout.segment.tracker')->track('Account Paypal Fully Approved', Shop::getContextListShopID());
 
             Tools::redirect(
                 (new LinkAdapter($this->context->link))->getAdminLink(
