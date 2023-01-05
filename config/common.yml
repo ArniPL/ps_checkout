@@ -115,17 +115,6 @@ services:
       - '@ps_checkout.customer'
       - '@ps_checkout.merchant'
 
-  ps_checkout.api.firebase.auth:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\Auth'
-    public: true
-
-  ps_checkout.api.firebase.auth.factory:
-    class: 'PrestaShop\Module\PrestashopCheckout\Api\Firebase\AuthFactory'
-    public: true
-    arguments:
-      - '@ps_checkout.api.firebase.auth'
-      - '@ps_checkout.persistent.configuration'
-
   ps_checkout.repository.paypal.account:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PaypalAccountRepository'
     public: true
@@ -149,24 +138,11 @@ services:
       - '@ps_checkout.configuration'
       - '@ps_accounts.facade'
 
-  ps_checkout.store.module.psx:
-    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PsxModule'
-    public: true
-    arguments:
-      - '@ps_checkout.context.prestashop'
-      - '@ps_checkout.repository.prestashop.account'
-
   ps_checkout.store.module.paypal:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\PaypalModule'
     public: true
     arguments:
       - '@ps_checkout.repository.paypal.account'
-
-  ps_checkout.store.module.firebase:
-    class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\FirebaseModule'
-    public: true
-    arguments:
-      - '@ps_checkout.repository.prestashop.account'
 
   ps_checkout.store.module.configuration:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\Modules\ConfigurationModule'
@@ -181,21 +157,6 @@ services:
   ps_checkout.builder.module_link:
     class: 'PrestaShop\Module\PrestashopCheckout\Builder\ModuleLink\ModuleLinkBuilder'
     public: true
-
-  ps_checkout.builder.payload.onboarding:
-    class: 'PrestaShop\Module\PrestashopCheckout\Builder\Payload\OnboardingPayloadBuilder'
-    public: true
-    arguments:
-      - '@ps_checkout.repository.prestashop.account'
-      - '@ps_checkout.adapter.language'
-      - '@ps_checkout.builder.module_link'
-
-  ps_checkout.updater.paypal.account:
-    class: 'PrestaShop\Module\PrestashopCheckout\Updater\PaypalAccountUpdater'
-    public: true
-    arguments:
-      - '@ps_checkout.persistent.configuration'
-      - '@ps_checkout.paypal.provider.merchant_integration'
 
   ps_checkout.step.live:
     class: 'PrestaShop\Module\PrestashopCheckout\OnBoarding\Step\LiveStep'
@@ -240,7 +201,7 @@ services:
     class: 'PrestaShop\Module\PrestashopCheckout\Presenter\Store\StorePresenter'
     public: true
     arguments:
-      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.firebase', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.psx', '@ps_checkout.store.module.configuration']
+      - ['@ps_checkout.store.module.context', '@ps_checkout.store.module.paypal', '@ps_checkout.store.module.configuration']
 
   ps_checkout.repository.pscheckoutcart:
     class: 'PrestaShop\Module\PrestashopCheckout\Repository\PsCheckoutCartRepository'
@@ -371,20 +332,6 @@ services:
     public: true
     arguments:
       - '@ps_checkout.cache.paypal.order'
-
-  ps_checkout.cache.paypal.merchant_integration:
-    class: 'Symfony\Component\Cache\Simple\FilesystemCache'
-    public: true
-    arguments:
-      - 'merchant-integration'
-      - 86400
-      - '@=service("ps_checkout.cache.directory").getPath()'
-
-  ps_checkout.paypal.provider.merchant_integration:
-    class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalMerchantIntegrationProvider'
-    public: true
-    arguments:
-      - '@ps_checkout.cache.paypal.merchant_integration'
 
   ps_checkout.paypal.provider.client_token:
     class: 'PrestaShop\Module\PrestashopCheckout\PayPal\PayPalClientTokenProvider'

@@ -135,15 +135,6 @@ class ValidateOrder
 
             if (false === $response['status']) {
                 if (false === empty($response['body']['message'])) {
-                    if ($response['body']['message'] === 'PAYEE_ACCOUNT_RESTRICTED') {
-                        /** @var PaypalAccountRepository $payPalAccountRepository */
-                        $payPalAccountRepository = $module->getService('ps_checkout.repository.paypal.account');
-                        /** @var PaypalAccountUpdater $payPalAccountUpdater */
-                        $payPalAccountUpdater = $module->getService('ps_checkout.updater.paypal.account');
-                        $payPalAccount = $payPalAccountRepository->getOnboardedAccount();
-                        $payPalAccount->setPaypalPaymentStatus(0);
-                        $payPalAccountUpdater->update($payPalAccount);
-                    }
                     (new PayPalError($response['body']['message']))->throwException();
                 }
 
